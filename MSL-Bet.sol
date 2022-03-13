@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 contract Betting {
    address payable public owner;
@@ -16,7 +16,7 @@ contract Betting {
    fallback() external payable {}
    
   constructor() public {
-      owner = msg.sender;
+      owner = payable(msg.sender);
       minimumBet = 100000000000000;
     }
 function kill() public {
@@ -31,7 +31,7 @@ function checkPlayerExists(address payable player) public view returns(bool){
     }
 function bet(uint8 _teamSelected) public payable {
       //The first require is used to check if the player already exist
-      require(!checkPlayerExists(msg.sender));
+      require(!checkPlayerExists(payable(msg.sender)));
       //The second one is used to see if the value sended by the player is
       //Higher than the minimum value
       require(msg.value >= minimumBet);
@@ -39,7 +39,7 @@ function bet(uint8 _teamSelected) public payable {
       playerInfo[msg.sender].amountBet = msg.value;
       playerInfo[msg.sender].teamSelected = _teamSelected;
 //then we add the address of the player to the players array
-      players.push(msg.sender);
+      players.push(payable(msg.sender));
 //at the end, we increment the stakes of the team selected with the player bet
       if ( _teamSelected == 1){
           totalBetsOne += msg.value;
